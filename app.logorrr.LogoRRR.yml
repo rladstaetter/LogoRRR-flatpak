@@ -1,7 +1,9 @@
 app-id: app.logorrr.LogoRRR
 runtime: org.freedesktop.Platform
-runtime-version: "24.08"
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk25
 command: LogoRRR
 finish-args:
   - --socket=x11
@@ -9,31 +11,43 @@ finish-args:
   - --device=dri
   - --filesystem=host:ro
 modules:
-  - name: LogoRRR
+  - name: openjdk
     buildsystem: simple
     build-commands:
-      - mkdir -p /app/lib/LogoRRR/
-      - cp -ar binaries/LogoRRR/* /app/lib/LogoRRR/
+      - /usr/lib/sdk/openjdk25/install.sh
+  - name: LogoRRR
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/openjdk25/bin
+      env:
+        JAVA_HOME: /usr/lib/sdk/openjdk25
+    build-commands:
+      - mvn clean package -pl "app.logorrr.dist.linux:app-image" -am -B -Dmaven.repo.local=./offline-repository --offline -Denforcer.skip=true
       - mkdir -p /app/bin
-      - ln -s /app/lib/LogoRRR/bin/LogoRRR /app/bin/LogoRRR
-      - install -Dm644 icons/logorrr-icon-16.png /app/share/icons/hicolor/16x16/apps/app.logorrr.LogoRRR.png
-      - install -Dm644 icons/logorrr-icon-32.png /app/share/icons/hicolor/32x32/apps/app.logorrr.LogoRRR.png
-      - install -Dm644 icons/logorrr-icon-64.png /app/share/icons/hicolor/64x64/apps/app.logorrr.LogoRRR.png
-      - install -Dm644 icons/logorrr-icon-128.png /app/share/icons/hicolor/128x128/apps/app.logorrr.LogoRRR.png
-      - install -Dm644 icons/logorrr-icon-256.png /app/share/icons/hicolor/256x256/apps/app.logorrr.LogoRRR.png
-      - install -Dm644 icons/logorrr-icon-512.png /app/share/icons/hicolor/512x512/apps/app.logorrr.LogoRRR.png
-      - install -Dm644 meta/app.logorrr.LogoRRR.metainfo.xml /app/share/metainfo/app.logorrr.LogoRRR.metainfo.xml
-      - install -Dm644 meta/app.logorrr.LogoRRR.desktop -t /app/share/applications
+      - cp -ar dist/linux/app-image/target/classes/LogoRRR/lib /app/
+      - cp -ar dist/linux/app-image/target/classes/LogoRRR/bin/LogoRRR /app/bin/
+      - install -Dm644 app-icons/src/main/resources/logorrr-icon-16.png /app/share/icons/hicolor/16x16/apps/app.logorrr.LogoRRR.png
+      - install -Dm644 app-icons/src/main/resources/logorrr-icon-32.png /app/share/icons/hicolor/32x32/apps/app.logorrr.LogoRRR.png
+      - install -Dm644 app-icons/src/main/resources/logorrr-icon-64.png /app/share/icons/hicolor/64x64/apps/app.logorrr.LogoRRR.png
+      - install -Dm644 app-icons/src/main/resources/logorrr-icon-128.png /app/share/icons/hicolor/128x128/apps/app.logorrr.LogoRRR.png
+      - install -Dm644 app-icons/src/main/resources/logorrr-icon-256.png /app/share/icons/hicolor/256x256/apps/app.logorrr.LogoRRR.png
+      - install -Dm644 app-icons/src/main/resources/logorrr-icon-512.png /app/share/icons/hicolor/512x512/apps/app.logorrr.LogoRRR.png
+      - install -Dm644 dist/linux/flatpak/app.logorrr.LogoRRR.metainfo.xml /app/share/metainfo/app.logorrr.LogoRRR.metainfo.xml
+      - install -Dm644 dist/linux/flatpak/app.logorrr.LogoRRR.desktop -t /app/share/applications
     sources:
+      - type: git
+        url: https://github.com/rladstaetter/LogoRRR.git
+        branch: 281-create-from-source-build
+#        commit: 66d56a8816b4cdf09daf25301eb8480cecdea26e
       - type: archive
-        url: https://www.logorrr.app/downloads/26.2.0/flatpak-package-26.2.0-aarch64.tar.gz
-        sha256: 820b7a82db44ecbe6c22076255587c906e44aced1398d5de8de888ff20d0da07
-        strip-components: 2
-        only-arches:
-        - aarch64
+        url: https://download2.gluonhq.com/openjfx/26/openjfx-26_linux-aarch64_bin-jmods.zip
+        sha256: c534512cbae32e186b7d8b0661149e6412ff8b9fe26124a4efd347b5fc028f30
+        dest: "env/target/javafx-jmods-26"
+        only-arches: [aarch64]
       - type: archive
-        url: https://www.logorrr.app/downloads/26.2.0/flatpak-package-26.2.0-amd64.tar.gz
-        sha256: bc48b90a4cab9b89effa05f11fb17b20f4a832b2d3544509a1bdfaa4839e16f0
-        strip-components: 2
-        only-arches:
-        - x86_64
+        url: https://download2.gluonhq.com/openjfx/26/openjfx-26_linux-x64_bin-jmods.zip
+        sha256: a1dc0f7c7af42817ef2b43fc5b5dc788f5c22ca891b2bb7bb4ecb19040acaf62
+        dest: "env/target/javafx-jmods-26"
+        only-arches: [x86_64]
+      - maven-dependencies-aarch64.yml
+      - maven-dependencies-x86_64.yml
