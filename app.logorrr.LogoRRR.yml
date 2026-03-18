@@ -46,7 +46,8 @@ modules:
         only-arches: [aarch64]
       - type: archive
         url: https://download2.gluonhq.com/openjfx/26/openjfx-26_linux-x64_bin-jmods.zip
-        sha256: 96e520f48610d8ffb94ca30face1f11ffe8a977ddc1c4ff80b1a9e9f048bd94e
+        sha256: a1dc0f7c7af42817ef2b43fc5b5dc788f5c22ca891b2bb7bb4ecb19040acaf62
         dest: "env/target/javafx-jmods-26"
         only-arches: [x86_64]
       - maven-dependencies-aarch64.yml
+      - maven-dependencies-x86_64.yml
