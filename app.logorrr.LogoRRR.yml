@@ -37,7 +37,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/rladstaetter/LogoRRR.git
-        branch: 281-create-from-source-build
+        branch: main
 #        commit: 66d56a8816b4cdf09daf25301eb8480cecdea26e
       - type: archive
         url: https://download2.gluonhq.com/openjfx/26/openjfx-26_linux-aarch64_bin-jmods.zip
